@@ -1,13 +1,16 @@
+F := .
+
 run:
-    go run .
+	go run main.go $(F)
 
 build:
-    go build -o ./bin/packager
+	go build -o ./bin/packager
 
 install:
-    go install
+	go install
 
 clean:
-    rm -rf ./bin
+	rm -rf ./bin
+	rm -rf ./packager-result
 
 .PHONY: run build install clean

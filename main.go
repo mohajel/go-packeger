@@ -18,14 +18,26 @@ func main() {
 	moduleName := getModuleName()
 	imports := getImports(filePath)
 
-	internalFile, err := os.Create("internal_packages.txt")
+	fmt.Printf("Module name: %s\n", moduleName)
+	fmt.Printf("Imports: %v\n", imports)
+
+	if _, err := os.Stat("./packager-result"); os.IsNotExist(err) {
+		err := os.Mkdir("./packager-result", os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
+	}
+
+	internalFile, err := os.Create("./packager-result/internal_packages.txt")
 	if err != nil {
 		fmt.Println("Error creating internal packages file:", err)
 		return
 	}
+
 	defer internalFile.Close()
 
-	externalFile, err := os.Create("external_packages.txt")
+	externalFile, err := os.Create("./packager-result/external_packages.txt")
 	if err != nil {
 		fmt.Println("Error creating external packages file:", err)
 		return
