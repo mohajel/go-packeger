@@ -15,6 +15,10 @@ func main() {
 	}
 
 	filePath := os.Args[1]
+
+	// remove final file name from path
+	path := strings.Join(strings.Split(filePath, "/")[:len(strings.Split(filePath, "/"))-1], "/")
+
 	moduleName := getModuleName()
 	imports := getImports(filePath)
 
@@ -51,6 +55,25 @@ func main() {
 			writeDoc(externalFile, pkg, false)
 		}
 	}
+
+	// execute go docs -all -src <paht>
+	cmd := exec.Command("go", "doc", "-all", "-src", path)
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Printf("Error getting doc for package %s: %v\n", path, err)
+		return
+	}
+	// save the output to a ./packager-result/docs.txt
+	docFile, err := os.Create("./packager-result/docs.txt")
+	if err != nil {
+		fmt.Println("Error creating docs file:", err)
+		return
+	}
+	defer docFile.Close()
+
+	writer := bufio.NewWriter(docFile)
+	writer.WriteString(string(output))
+	defer writer.Flush()
 }
 
 func getModuleName() string {
